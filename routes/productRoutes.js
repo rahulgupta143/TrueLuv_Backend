@@ -83,30 +83,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Add review to a product
-// Add review to a product
-router.post("/review/:id", async (req, res) => {
-  try {
-    const { name, comment, rating } = req.body;
-
-    // Check all fields
-    if (!name || !comment || !rating) {
-      return res.status(400).json({ message: "All fields required" });
-    }
-
-    const product = await Product.findById(req.params.id);
-
-    if (!product) return res.status(404).json({ message: "Product not found" });
-
-    // Push new review
-    product.reviews.push({ name, comment, rating });
-    await product.save();
-
-    res.json(product); // return updated product
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
 module.exports = router;

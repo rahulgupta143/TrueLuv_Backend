@@ -13,12 +13,6 @@ const productSchema = new mongoose.Schema(
       enum: ["In Stock", "Out of Stock"],
       default: "In Stock",
     },
-    // ⭐⭐⭐ NEW FIELDS
-    reviews: [reviewSchema], // all reviews
-    ratings: {
-      type: Number, // average rating
-      default: 0,
-    },
   },
 
   { timestamps: true },
