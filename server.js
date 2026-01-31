@@ -11,11 +11,15 @@ const app = express();
 // ✅ CORS — FRONTEND ONLY ALLOWED
 app.use(
   cors({
-    origin: "https://dynamic-starlight-9be205.netlify.app", // frontend live URL
+    origin: [
+      "https://dynamic-starlight-9be205.netlify.app", // live frontend
+      "http://127.0.0.1:5500",                         // local dev
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-  }),
+  })
 );
+
 
 // ✅ JSON body parse
 app.use(express.json());
