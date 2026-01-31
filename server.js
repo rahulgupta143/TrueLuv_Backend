@@ -14,6 +14,10 @@ app.use(express.json());
 // ✅ routes
 app.use("/api/products", productRoutes);
 
+app.get("/", (req, res) => {
+  res.send("TrueLuv Backend is Running 🚀");
+});
+
 // ✅ MongoDB connect
 mongoose
   .connect(process.env.MONGO_URI) // 👈 same name as .env

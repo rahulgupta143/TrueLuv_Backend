@@ -8,7 +8,7 @@ router.get("/related/:category/:id", async (req, res) => {
     const { category, id } = req.params;
 
     const products = await Product.find({
-      category,
+      category: { $regex: new RegExp("^" + category + "$", "i") },
       _id: { $ne: id },
     });
 
@@ -21,8 +21,10 @@ router.get("/related/:category/:id", async (req, res) => {
 /* ================= CATEGORY PRODUCTS ================= */
 router.get("/category/:category", async (req, res) => {
   try {
+    const category = req.params.category;
+
     const products = await Product.find({
-      category: req.params.category,
+      category: { $regex: new RegExp("^" + category + "$", "i") },
     });
 
     res.json(products);
