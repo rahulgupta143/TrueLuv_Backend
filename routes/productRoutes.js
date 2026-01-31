@@ -2,54 +2,54 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 
-/* ================= RELATED PRODUCTS (SABSE UPAR) ================= */
-router.get("/related/:category/:id", async (req, res) => {
-  try {
-    const { category, id } = req.params;
-
-    const products = await Product.find({
-      category: { $regex: new RegExp("^" + category + "$", "i") },
-      _id: { $ne: id },
-    });
-
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-/* ================= CATEGORY PRODUCTS ================= */
-router.get("/category/:category", async (req, res) => {
-  try {
-    const category = req.params.category;
-
-    const products = await Product.find({
-      category: { $regex: new RegExp("^" + category + "$", "i") },
-    });
-
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-/* ================= ALL PRODUCTS ================= */
+/* ================= GET ALL PRODUCTS ================= */
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find();
     res.json(products);
   } catch (err) {
+    console.error("GET ALL ERROR:", err);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-/* ================= SINGLE PRODUCT (LAST ME) ================= */
+/* ================= GET PRODUCTS BY CATEGORY ================= */
+router.get("/category/:category", async (req, res) => {
+  try {
+    const { category } = req.params;
+    const products = await Product.find({ category });
+    res.json(products);
+  } catch (err) {
+    console.error("CATEGORY ERROR:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/* ================= GET RELATED PRODUCTS ================= */
+router.get("/related/:category/:id", async (req, res) => {
+  try {
+    const { category, id } = req.params;
+    const products = await Product.find({
+      category,
+      _id: { $ne: id },
+    });
+    res.json(products);
+  } catch (err) {
+    console.error("RELATED ERROR:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/* ================= GET SINGLE PRODUCT (LAST) ================= */
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
     res.json(product);
   } catch (err) {
-    res.status(500).json({ message: "Server Error" });
+    console.error("SINGLE PRODUCT ERROR:", err);
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -71,6 +71,7 @@ router.post("/", async (req, res) => {
     const saved = await product.save();
     res.json(saved);
   } catch (err) {
+    console.error("ADD PRODUCT ERROR:", err);
     res.status(500).json({ message: "Server Error" });
   }
 });
@@ -81,6 +82,7 @@ router.delete("/:id", async (req, res) => {
     await Product.findByIdAndDelete(req.params.id);
     res.json({ message: "Product deleted" });
   } catch (err) {
+    console.error("DELETE ERROR:", err);
     res.status(500).json({ message: "Server Error" });
   }
 });
